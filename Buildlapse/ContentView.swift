@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import AVFoundation
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -35,7 +36,7 @@ struct ContentView: View {
                     }
                 }
             }
-            Text("Select an item")
+            Text(" an item")
         }
     }
 
