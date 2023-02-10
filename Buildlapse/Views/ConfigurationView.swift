@@ -27,49 +27,8 @@ struct ConfigurationView: View {
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 1, trailing: 0))
                 
                 // A group that hides view labels.
-                Group {
-                    VStack(alignment: .leading, spacing: verticalLabelSpacing) {
-                        Text("Capture Type")
-                        Picker("Capture", selection: $screenRecorder.captureType) {
-                            Text("Display")
-                                .tag(ScreenRecorder.CaptureType.display)
-                            Text("Window")
-                                .tag(ScreenRecorder.CaptureType.window)
-                        }
-                    }
-                    
-                    VStack(alignment: .leading, spacing: verticalLabelSpacing) {
-                        Text("Screen Content")
-                        switch screenRecorder.captureType {
-                        case .display:
-                            Picker("Display", selection: $screenRecorder.selectedDisplay) {
-                                ForEach(screenRecorder.availableDisplays, id: \.self) { display in
-                                    Text(display.displayName)
-                                        .tag(SCDisplay?.some(display))
-                                }
-                            }
-                            
-                        case .window:
-                            Picker("Window", selection: $screenRecorder.selectedWindow) {
-                                ForEach(screenRecorder.availableWindows, id: \.self) { window in
-                                    Text(window.displayName)
-                                        .tag(SCWindow?.some(window))
-                                }
-                            }
-                        }
-                    }
-                }
-                .labelsHidden()
+                VideoSectionView(verticalLabelSpacing: verticalLabelSpacing, screenRecorder: screenRecorder)
                 
-                Toggle("Exclude sample app from stream", isOn: $screenRecorder.isAppExcluded)
-                    .disabled(screenRecorder.captureType == .window)
-                    .onChange(of: screenRecorder.isAppExcluded) { _ in
-                        // Capturing app audio is only possible when the sample is included in the stream.
-                        // Ensure the audio stops playing if the user enables the "Exclude app from stream" checkbox.
-//                        if screenRecorder.isAppExcluded {
-//                            audioPlayer.stop()
-//                        }
-                    }
                 
                 // Add some space between the Video and Audio sections.
                 Spacer()
@@ -140,5 +99,56 @@ struct HeaderView: View {
             .font(.headline)
             .foregroundColor(.secondary)
             .alignmentGuide(.leading) { _ in alignmentOffset }
+    }
+}
+
+struct VideoSectionView: View {
+    let verticalLabelSpacing: CGFloat;
+    @ObservedObject var screenRecorder: ScreenRecorder;
+    
+    var body: some View {
+        Group {
+            VStack(alignment: .leading, spacing: verticalLabelSpacing) {
+                Text("Capture Type")
+                Picker("Capture", selection: $screenRecorder.captureType) {
+                    Text("Display")
+                        .tag(ScreenRecorder.CaptureType.display)
+                    Text("Window")
+                        .tag(ScreenRecorder.CaptureType.window)
+                }
+            }
+            
+            VStack(alignment: .leading, spacing: verticalLabelSpacing) {
+                Text("Screen Content")
+                switch screenRecorder.captureType {
+                case .display:
+                    Picker("Display", selection: $screenRecorder.selectedDisplay) {
+                        ForEach(screenRecorder.availableDisplays, id: \.self) { display in
+                            Text(display.displayName)
+                                .tag(SCDisplay?.some(display))
+                        }
+                    }
+                    
+                case .window:
+                    Picker("Window", selection: $screenRecorder.selectedWindow) {
+                        ForEach(screenRecorder.availableWindows, id: \.self) { window in
+                            Text(window.displayName)
+                                .tag(SCWindow?.some(window))
+                        }
+                    }
+                }
+            }
+        }
+        .labelsHidden()
+        
+        Toggle("Exclude sample app from stream", isOn: $screenRecorder.isAppExcluded)
+            .disabled(screenRecorder.captureType == .window)
+            .onChange(of: screenRecorder.isAppExcluded) { _ in
+                // Capturing app audio is only possible when the sample is included in the stream.
+                // Ensure the audio stops playing if the user enables the "Exclude app from stream" checkbox.
+//                        if screenRecorder.isAppExcluded {
+//                            audioPlayer.stop()
+//                        }
+            }
     }
 }
