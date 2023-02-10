@@ -35,36 +35,13 @@ struct ConfigurationView: View {
             .padding()
             
             Spacer()
-            HStack {
-                Button {
-                    Task { await screenRecorder.start() }
-                    // Fades the paused screen out.
-                    withAnimation(Animation.easeOut(duration: 0.25)) {
-                        userStopped = false
-                    }
-                } label: {
-                    Text("Start Capture")
-                }
-                .disabled(screenRecorder.isRunning)
-                Button {
-                    Task { await screenRecorder.stop() }
-                    // Fades the paused screen in.
-                    withAnimation(Animation.easeOut(duration: 0.25)) {
-                        userStopped = true
-                    }
-                    
-                } label: {
-                    Text("Stop Capture")
-                }
-                .disabled(!screenRecorder.isRunning)
-            }
-            .frame(maxWidth: .infinity, minHeight: 60)
+            
+            StartCaptureView(screenRecorder: screenRecorder, userStopped: $userStopped)
         }
         .background(MaterialView())
     }
 }
 
-/// A view that displays a styled header for the Video and Audio sections.
 struct HeaderView: View {
     
     private let title: String
@@ -156,5 +133,38 @@ struct AudioSectionView: View {
 //                    Text("\(!audioPlayer.isPlaying ? "Play" : "Stop") App Audio")
 //                }
 //                .disabled(screenRecorder.isAppExcluded)
+    }
+}
+
+struct StartCaptureView: View {
+    
+    @ObservedObject var screenRecorder: ScreenRecorder;
+    @Binding var userStopped: Bool;
+    
+    var body: some View {
+        HStack {
+            Button {
+                Task { await screenRecorder.start() }
+                // Fades the paused screen out.
+                withAnimation(Animation.easeOut(duration: 0.25)) {
+                    userStopped = false
+                }
+            } label: {
+                Text("Start Capture")
+            }
+            .disabled(screenRecorder.isRunning)
+            Button {
+                Task { await screenRecorder.stop() }
+                // Fades the paused screen in.
+                withAnimation(Animation.easeOut(duration: 0.25)) {
+                    userStopped = true
+                }
+                
+            } label: {
+                Text("Stop Capture")
+            }
+            .disabled(!screenRecorder.isRunning)
+        }
+        .frame(maxWidth: .infinity, minHeight: 60)
     }
 }
