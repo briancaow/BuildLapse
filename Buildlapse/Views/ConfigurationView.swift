@@ -23,30 +23,13 @@ struct ConfigurationView: View {
     var body: some View {
         VStack {
             Form {
-                // A group that hides view labels.
                 VideoSectionView(verticalLabelSpacing: verticalLabelSpacing, screenRecorder: screenRecorder)
                 
-                
-                // Add some space between the Video and Audio sections.
                 Spacer()
                     .frame(height: 20)
                 
-                HeaderView("Audio")
+                AudioSectionView(screenRecorder: screenRecorder)
                 
-                Toggle("Capture audio", isOn: $screenRecorder.isAudioCaptureEnabled)
-                Toggle("Exclude app audio", isOn: $screenRecorder.isAppAudioExcluded)
-                    .disabled(screenRecorder.isAppExcluded)
-                AudioLevelsView(audioLevelsProvider: screenRecorder.audioLevelsProvider)
-//                Button {
-//                    if !audioPlayer.isPlaying {
-//                        audioPlayer.play()
-//                    } else {
-//                        audioPlayer.stop()
-//                    }
-//                } label: {
-//                    Text("\(!audioPlayer.isPlaying ? "Play" : "Stop") App Audio")
-//                }
-//                .disabled(screenRecorder.isAppExcluded)
                 Spacer()
             }
             .padding()
@@ -150,5 +133,28 @@ struct VideoSectionView: View {
 //                            audioPlayer.stop()
 //                        }
             }
+    }
+}
+
+struct AudioSectionView: View {
+    @ObservedObject var screenRecorder: ScreenRecorder;
+    
+    var body: some View {
+        HeaderView("Audio")
+        
+        Toggle("Capture audio", isOn: $screenRecorder.isAudioCaptureEnabled)
+        Toggle("Exclude app audio", isOn: $screenRecorder.isAppAudioExcluded)
+            .disabled(screenRecorder.isAppExcluded)
+        AudioLevelsView(audioLevelsProvider: screenRecorder.audioLevelsProvider)
+//                Button {
+//                    if !audioPlayer.isPlaying {
+//                        audioPlayer.play()
+//                    } else {
+//                        audioPlayer.stop()
+//                    }
+//                } label: {
+//                    Text("\(!audioPlayer.isPlaying ? "Play" : "Stop") App Audio")
+//                }
+//                .disabled(screenRecorder.isAppExcluded)
     }
 }
