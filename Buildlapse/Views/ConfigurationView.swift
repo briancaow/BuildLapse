@@ -23,9 +23,6 @@ struct ConfigurationView: View {
     var body: some View {
         VStack {
             Form {
-                HeaderView("Video")
-                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 1, trailing: 0))
-                
                 // A group that hides view labels.
                 VideoSectionView(verticalLabelSpacing: verticalLabelSpacing, screenRecorder: screenRecorder)
                 
@@ -107,6 +104,9 @@ struct VideoSectionView: View {
     @ObservedObject var screenRecorder: ScreenRecorder;
     
     var body: some View {
+        HeaderView("Video")
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 1, trailing: 0))
+        
         Group {
             VStack(alignment: .leading, spacing: verticalLabelSpacing) {
                 Text("Capture Type")
