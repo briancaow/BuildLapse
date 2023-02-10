@@ -9,33 +9,73 @@ import SwiftUI
 import CoreData
 import AVFoundation
 import ScreenCaptureKit
+import OSLog
 
 struct ContentView: View {
-    @State private var selection = "1x"
-    let speeds = ["1x", "2x", "4x", "8x", "16x"]
+
+    @State var userStopped = false
+    @State var disableInput = false
+    @State var isUnauthorized = false
+    
+    @StateObject var screenRecorder = ScreenRecorder()
+    
     
     var body: some View {
-        VStack {
-            Picker("timelapse speed", selection: $selection) {
-                ForEach(speeds, id: \.self) { item in
-                    Text("\(item)")
+        HSplitView {
+            ConfigurationView(screenRecorder: screenRecorder, userStopped: $userStopped)
+                .frame(minWidth: 280, maxWidth: 280)
+                .padding(10)
+            screenRecorder.capturePreview
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .aspectRatio(screenRecorder.contentSize, contentMode: .fit)
+                .padding(8)
+                .overlay {
+                    if userStopped {
+                        Image(systemName: "nosign")
+                            .font(.system(size: 250, weight: .bold))
+                            .foregroundColor(Color(white: 0.3, opacity: 1.0))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Color(white: 0.0, opacity: 0.5))
+                    }
+                }
+        }
+        .overlay {
+            if isUnauthorized {
+                VStack() {
+                    Spacer()
+                    VStack {
+                        Text("No screen recording permission.")
+                            .font(.largeTitle)
+                            .padding(.top)
+                        Text("Open System Settings and go to Privacy & Security > Screen Recording to grant permission.")
+                            .font(.title2)
+                            .padding(.bottom)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(.red)
+                    
                 }
             }
-            .pickerStyle(.menu)
-            .frame(width: 200, height: 100)
+        }
+        .navigationTitle("Build Lapse")
+        .onAppear {
+            Task {
+                if await screenRecorder.canRecord {
+                    await screenRecorder.start()
+                } else {
+                    isUnauthorized = true
+                    disableInput = true
+                }
+            }
         }
 
-        Button("Start Recording", action: record);
     }
-
-    private func record(){
-        print("recording");
-    }
-
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView()
     }
 }
+
