@@ -6,72 +6,65 @@
 //
 
 import SwiftUI
-import CoreData
+import Aperture
+import Foundation
 import AVFoundation
-import ScreenCaptureKit
-import OSLog
 
 struct ContentView: View {
-
-    @State var userStopped = false
-    @State var disableInput = false
-    @State var isUnauthorized = false
     
-    @StateObject var screenRecorder = ScreenRecorder()
+    let url: URL
+    let aperture: Aperture
+    let fileManager: FileManager
     
+    
+    init() {
+        self.url = URL(fileURLWithPath: "./screen-recording.mp4")
+        self.aperture = try! Aperture(destination: url)
+        self.fileManager = FileManager.default
+        let currentDirectory = fileManager.currentDirectoryPath
+        print(currentDirectory)
+    }
     
     var body: some View {
-        HSplitView {
-            ConfigurationView(screenRecorder: screenRecorder, userStopped: $userStopped)
-                .frame(minWidth: 280, maxWidth: 280)
-                .padding(10)
-            screenRecorder.capturePreview
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .aspectRatio(screenRecorder.contentSize, contentMode: .fit)
-                .padding(8)
-                .overlay {
-                    if userStopped {
-                        Image(systemName: "nosign")
-                            .font(.system(size: 250, weight: .bold))
-                            .foregroundColor(Color(white: 0.3, opacity: 1.0))
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Color(white: 0.0, opacity: 0.5))
-                    }
-                }
+        HStack{
+            Button("Record", action: startRecord)
+            Button("stop", action: endRecording)
         }
-        .overlay {
-            if isUnauthorized {
-                VStack() {
-                    Spacer()
-                    VStack {
-                        Text("No screen recording permission.")
-                            .font(.largeTitle)
-                            .padding(.top)
-                        Text("Open System Settings and go to Privacy & Security > Screen Recording to grant permission.")
-                            .font(.title2)
-                            .padding(.bottom)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .background(.red)
-                    
-                }
-            }
-        }
-        .navigationTitle("Build Lapse")
-        .onAppear {
-            Task {
-                if await screenRecorder.canRecord {
-                    await screenRecorder.start()
-                } else {
-                    isUnauthorized = true
-                    disableInput = true
-                }
-            }
-        }
+   
+    }
+    
+    func startRecord() {
+        self.aperture.onFinish = {
+            switch $0 {
+            case .success(let warning):
+                print("Finished recording:", url.path)
 
+                if let warning = warning {
+                    print("Warning:", warning.localizedDescription)
+                }
+
+                exit(0)
+            case .failure(let error):
+                print(error)
+                exit(1)
+            }
+        }
+        
+        aperture.start()
+
+        print("Available screens:", Aperture.Devices.screen().map(\.name).joined(separator: ", "))
+    }
+
+    func endRecording() {
+        aperture.stop()
+        setbuf(__stdoutp, nil)
+        RunLoop.current.run()
+        print("Recording completed successfully")
     }
     
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import ScreenCaptureKit
 
 @main
 struct BuildlapseApp: App {

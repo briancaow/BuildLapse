@@ -10,15 +10,15 @@ import ScreenCaptureKit
 
 /// The app's configuration user interface.
 struct ConfigurationView: View {
+    @ObservedObject var screenRecorder: ScreenRecorder
+    @Binding var userStopped: Bool
+    
     
     private let sectionSpacing: CGFloat = 20
     private let verticalLabelSpacing: CGFloat = 8
-    
     private let alignmentOffset: CGFloat = 10
     
 //    @StateObject private var audioPlayer = AudioPlayer()
-    @ObservedObject var screenRecorder: ScreenRecorder
-    @Binding var userStopped: Bool
     
     var body: some View {
         VStack {
