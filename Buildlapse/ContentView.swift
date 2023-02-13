@@ -15,21 +15,41 @@ struct ContentView: View {
     let url: URL
     let aperture: Aperture
     let fileManager: FileManager
+    @State var tabSelection: Int = 0
     
     
     init() {
         self.url = URL(fileURLWithPath: "./screen-recording.mp4")
         self.aperture = try! Aperture(destination: url)
         self.fileManager = FileManager.default
+        
         let currentDirectory = fileManager.currentDirectoryPath
+        
         print(currentDirectory)
     }
     
     var body: some View {
-        HStack{
-            Button("Record", action: startRecord)
-            Button("stop", action: endRecording)
+        TabView(selection: $tabSelection){
+            VStack{
+                Text("Build History")
+                BuildHistoryView()
+            }
+            .tabItem{
+                Text("Home")
+            }
+            .tag(0)
+            
+            HStack{
+                Button("Record", action: startRecord)
+                Button("stop", action: endRecording)
+            }
+            .tabItem{
+                Text("Record")
+            }
+            .tag(1)
+            
         }
+        
    
     }
     
