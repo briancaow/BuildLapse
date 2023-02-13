@@ -30,13 +30,15 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $tabSelection){
-            Text("Home")
+            VStack{
+                Text("Build History")
+                BuildHistoryView()
+            }
             .tabItem{
                 Text("Home")
             }
             .tag(0)
             
- 
             HStack{
                 Button("Record", action: startRecord)
                 Button("stop", action: endRecording)
