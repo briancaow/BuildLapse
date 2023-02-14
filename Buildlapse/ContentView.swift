@@ -94,9 +94,28 @@ struct ContentView: View {
         isRecording = false
         aperture.stop()
         setbuf(__stdoutp, nil)
+        
+        moveFileToDownloads();
         //RunLoop.current.run()
         print("Recording completed successfully")
     }
+    
+    func moveFileToDownloads() {
+        
+        let fileManager = FileManager.default
+        let downloadsFolderURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+
+        let destinationURL = downloadsFolderURL.appendingPathComponent("\(filename).mp4")
+        print(destinationURL)
+        do {
+            try fileManager.moveItem(at: url, to: destinationURL)
+            print("File moved to Downloads folder.")
+        } catch {
+            print("Error: \(error)")
+        }
+        
+    }
+    
     
 }
 

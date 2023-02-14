@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A777BE1D299BF40700061722 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777BE1C299BF40700061722 /* DownloadManager.swift */; };
 		A7A9FC9B2999864900172FAE /* Aperture in Frameworks */ = {isa = PBXBuildFile; productRef = A7A9FC9A2999864900172FAE /* Aperture */; };
 		A7A9FC9D2999BF1B00172FAE /* BuildHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */; };
 		A7B93C8C2991854900142CAF /* BuildlapseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B93C8B2991854900142CAF /* BuildlapseApp.swift */; };
@@ -38,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		A777BE1B299B218E00061722 /* BuildlapseDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BuildlapseDebug.entitlements; sourceTree = "<group>"; };
+		A777BE1C299BF40700061722 /* DownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildHistoryView.swift; sourceTree = "<group>"; };
 		A7B93C882991854900142CAF /* Buildlapse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Buildlapse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7B93C8B2991854900142CAF /* BuildlapseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildlapseApp.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				A7B93C992991854B00142CAF /* Buildlapse.entitlements */,
 				A7B93C962991854B00142CAF /* Buildlapse.xcdatamodeld */,
 				A7B93C912991854B00142CAF /* Preview Content */,
+				A777BE1C299BF40700061722 /* DownloadManager.swift */,
 			);
 			path = Buildlapse;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7B93C982991854B00142CAF /* Buildlapse.xcdatamodeld in Sources */,
+				A777BE1D299BF40700061722 /* DownloadManager.swift in Sources */,
 				A7B93C8E2991854900142CAF /* ContentView.swift in Sources */,
 				A7A9FC9D2999BF1B00172FAE /* BuildHistoryView.swift in Sources */,
 				A7B93C8C2991854900142CAF /* BuildlapseApp.swift in Sources */,
