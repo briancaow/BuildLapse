@@ -37,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A777BE1B299B218E00061722 /* BuildlapseDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BuildlapseDebug.entitlements; sourceTree = "<group>"; };
 		A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildHistoryView.swift; sourceTree = "<group>"; };
 		A7B93C882991854900142CAF /* Buildlapse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Buildlapse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7B93C8B2991854900142CAF /* BuildlapseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildlapseApp.swift; sourceTree = "<group>"; };
@@ -101,6 +102,7 @@
 		A7B93C8A2991854900142CAF /* Buildlapse */ = {
 			isa = PBXGroup;
 			children = (
+				A777BE1B299B218E00061722 /* BuildlapseDebug.entitlements */,
 				A7B93C8D2991854900142CAF /* ContentView.swift */,
 				A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */,
 				A7B93C8B2991854900142CAF /* BuildlapseApp.swift */,
@@ -431,11 +433,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Buildlapse/Buildlapse.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Buildlapse/BuildlapseDebug.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Buildlapse/Preview Content\"";
+				DEVELOPMENT_TEAM = L4C8QAYK3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -446,6 +451,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.bcao.Buildlapse;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -457,10 +463,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Buildlapse/Buildlapse.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Buildlapse/Preview Content\"";
+				DEVELOPMENT_TEAM = L4C8QAYK3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
