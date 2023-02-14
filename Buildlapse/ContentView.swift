@@ -31,15 +31,6 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $tabSelection){
-            VStack{
-                Text("Build History")
-                BuildHistoryView()
-            }
-            .tabItem{
-                Text("Home")
-            }
-            .tag(0)
-            
             VStack {
 
                 Text(isRecording ? "Recording destop. Press stop to download recording." : "not recording")
@@ -59,7 +50,18 @@ struct ContentView: View {
             .tabItem{
                 Text("Record")
             }
+            .tag(0)
+            
+            VStack{
+                Text("Build History")
+                BuildHistoryView()
+            }
+            .tabItem{
+                Text("Stats")
+            }
             .tag(1)
+            
+            
             
         }
         .padding()
