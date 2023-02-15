@@ -11,50 +11,67 @@ import Foundation
 import AVFoundation
 
 struct ContentView: View {
-    
+    let filename: String
     let url: URL
     let aperture: Aperture
-    let fileManager: FileManager
+    
     @State var tabSelection: Int = 0
+    @State var isRecording: Bool = false
     
-    
-    init() {
-        self.url = URL(fileURLWithPath: "./screen-recording.mp4")
+    init(filename: String) {
+        self.filename = filename
+        
+        self.url = URL(fileURLWithPath: "./\(filename).mp4")
         self.aperture = try! Aperture(destination: url)
-        self.fileManager = FileManager.default
         
+        let fileManager: FileManager = FileManager.default
         let currentDirectory = fileManager.currentDirectoryPath
-        
         print(currentDirectory)
     }
     
     var body: some View {
         TabView(selection: $tabSelection){
+            VStack {
+
+                Text(isRecording ? "Recording destop. Press stop to download recording." : "not recording")
+                HStack {
+                    Button("Record") {
+                        startRecord()
+                    }
+                    .disabled(filename == "")
+                    
+                    Button("Stop Record") {
+                        endRecording()
+                    }
+                    .disabled(filename == "")
+                    
+                }
+            }
+            .tabItem{
+                Text("Record")
+            }
+            .tag(0)
+            
             VStack{
                 Text("Build History")
                 BuildHistoryView()
             }
             .tabItem{
-                Text("Home")
-            }
-            .tag(0)
-            
-            HStack{
-                Button("Record", action: startRecord)
-                Button("stop", action: endRecording)
-            }
-            .tabItem{
-                Text("Record")
+                Text("Stats")
             }
             .tag(1)
             
+            
+            
         }
+        .padding()
         
    
     }
     
     func startRecord() {
-        self.aperture.onFinish = {
+        isRecording = true
+        aperture.onFinish = {
             switch $0 {
             case .success(let warning):
                 print("Finished recording:", url.path)
@@ -63,7 +80,7 @@ struct ContentView: View {
                     print("Warning:", warning.localizedDescription)
                 }
 
-                exit(0)
+                //exit(0)
             case .failure(let error):
                 print(error)
                 exit(1)
@@ -76,11 +93,31 @@ struct ContentView: View {
     }
 
     func endRecording() {
+        isRecording = false
         aperture.stop()
         setbuf(__stdoutp, nil)
-        RunLoop.current.run()
+        
+        moveFileToDownloads();
+        //RunLoop.current.run()
         print("Recording completed successfully")
     }
+    
+    func moveFileToDownloads() {
+        
+        let fileManager = FileManager.default
+        let downloadsFolderURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+
+        let destinationURL = downloadsFolderURL.appendingPathComponent("\(filename).mp4")
+        print(destinationURL)
+        do {
+            try fileManager.moveItem(at: url, to: destinationURL)
+            print("File moved to Downloads folder.")
+        } catch {
+            print("Error: \(error)")
+        }
+        
+    }
+    
     
 }
 
@@ -88,7 +125,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(filename: "filename")
     }
 }
 
