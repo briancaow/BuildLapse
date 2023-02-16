@@ -21,7 +21,7 @@ struct ContentView: View {
     init(filename: String) {
         self.filename = filename
         
-        self.url = URL(fileURLWithPath: "./\(filename).mp4")
+        self.url = URL(fileURLWithPath: "./tmp/\(filename).mp4")
         self.aperture = try! Aperture(destination: url)
         
         let fileManager: FileManager = FileManager.default
@@ -33,7 +33,7 @@ struct ContentView: View {
         TabView(selection: $tabSelection){
             VStack {
 
-                Text(isRecording ? "Recording destop. Press stop to download recording." : "not recording")
+                Text(isRecording ? "🔴 Recording desktop. Press stop to download recording." : "not recording")
                 HStack {
                     Button("Record") {
                         startRecord()
@@ -61,15 +61,12 @@ struct ContentView: View {
             }
             .tag(1)
             
-            
-            
         }
         .padding()
         
-   
     }
     
-    func startRecord() {
+    private func startRecord() {
         isRecording = true
         aperture.onFinish = {
             switch $0 {
@@ -92,32 +89,75 @@ struct ContentView: View {
         print("Available screens:", Aperture.Devices.screen().map(\.name).joined(separator: ", "))
     }
 
-    func endRecording() {
+    private func endRecording() {
         isRecording = false
         aperture.stop()
+        
         setbuf(__stdoutp, nil)
         
-        moveFileToDownloads();
+        
+        adjustPlayBackSpeed()
+        moveFileToDownloads()
+        
         //RunLoop.current.run()
+        
         print("Recording completed successfully")
     }
     
-    func moveFileToDownloads() {
+    private func adjustPlayBackSpeed() {
+        
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ffmpeg")
+        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=0.05*PTS", "./tmp/output.mp4"]
+        
+        let outputPipe = Pipe()
+        let errorPipe = Pipe()
+
+        task.standardOutput = outputPipe
+        task.standardError = errorPipe
+        
+        do {
+            try task.run()
+            task.waitUntilExit()
+        } catch {
+            print("Error: \(error)")
+        }
+        
+        let outputData = outputPipe.fileHandleForReading.readDataToEndOfFile()
+        let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        
+        let output = String(decoding: outputData, as: UTF8.self)
+        let error = String(decoding: errorData, as: UTF8.self)
+        
+        print("Output: \(output)")
+        print("Error: \(error)")
+        
+        // Remove testfile
+        let fileManager = FileManager.default
+        
+        do {
+            try fileManager.removeItem(atPath: "./tmp/\(filename).mp4")
+        } catch {
+            print("Error: \(error)")
+        }
+
+    }
+    
+    private func moveFileToDownloads() {
         
         let fileManager = FileManager.default
         let downloadsFolderURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
 
-        let destinationURL = downloadsFolderURL.appendingPathComponent("\(filename).mp4")
+        let destinationURL = downloadsFolderURL.appendingPathComponent("output.mp4")
         print(destinationURL)
         do {
-            try fileManager.moveItem(at: url, to: destinationURL)
+            try fileManager.moveItem(at: URL(fileURLWithPath: "./tmp/output.mp4"), to: destinationURL)
             print("File moved to Downloads folder.")
         } catch {
             print("Error: \(error)")
         }
         
     }
-    
     
 }
 
