@@ -97,7 +97,17 @@ struct ContentView: View {
         
         
         adjustPlayBackSpeed()
-        moveFileToDownloads()
+        let startTime = CMTime(seconds: 0, preferredTimescale: 1)
+        let videoDuration = getVideoDuration(url: URL(fileURLWithPath: "./tmp/timelapsed.mp4"))
+        let endTime = CMTime(seconds: videoDuration/2, preferredTimescale: 1)
+        trimVideo(sourceURL: URL(fileURLWithPath: "./tmp/timelapsed.mp4"), destinationURL: URL(fileURLWithPath: "./tmp/output.mp4"), startTime: startTime, endTime: endTime) { error in
+            if let error = error {
+                print("Error trimming video: \(error)")
+            } else {
+                print("Video trimmed successfully!")
+            }
+        }
+        
         
         //RunLoop.current.run()
         
@@ -108,7 +118,7 @@ struct ContentView: View {
         
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ffmpeg")
-        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=0.05*PTS", "./tmp/output.mp4"]
+        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=0.5*PTS", "./tmp/timelapsed.mp4"]
         
         let outputPipe = Pipe()
         let errorPipe = Pipe()
@@ -141,6 +151,46 @@ struct ContentView: View {
             print("Error: \(error)")
         }
 
+    }
+    
+    private func trimVideo(sourceURL: URL, destinationURL: URL, startTime: CMTime, endTime: CMTime, completion: @escaping (Error?) -> ()) {
+        let asset = AVAsset(url: sourceURL)
+        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
+            completion(nil)
+            return
+        }
+        
+        exportSession.outputURL = destinationURL
+        exportSession.outputFileType = AVFileType.mp4
+        
+        let timeRange = CMTimeRangeFromTimeToTime(start: startTime, end: endTime)
+        exportSession.timeRange = timeRange
+        exportSession.exportAsynchronously {
+            if exportSession.status == .completed {
+                completion(nil)
+                moveFileToDownloads()
+                
+                // Remove timelapse file
+                let fileManager = FileManager.default
+                
+                do {
+                    try fileManager.removeItem(atPath: "./tmp/timelapsed.mp4")
+                } catch {
+                    print("Error: \(error)")
+                }
+                
+            } else if let error = exportSession.error {
+                completion(error)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    private func getVideoDuration(url: URL) -> Double {
+        let asset = AVAsset(url: url)
+        let duration = asset.duration
+        return CMTimeGetSeconds(duration)
     }
     
     private func moveFileToDownloads() {
