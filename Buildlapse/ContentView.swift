@@ -105,9 +105,10 @@ struct ContentView: View {
     }
     
     private func adjustPlayBackSpeed() {
+        
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ffmpeg")
-        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "''setpts=0.05*PTS''", "./tmp/output.mp4"]
+        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=0.05*PTS", "./tmp/output.mp4"]
         
         let outputPipe = Pipe()
         let errorPipe = Pipe()
@@ -130,6 +131,16 @@ struct ContentView: View {
         
         print("Output: \(output)")
         print("Error: \(error)")
+        
+        // Remove testfile
+        let fileManager = FileManager.default
+        
+        do {
+            try fileManager.removeItem(atPath: "./tmp/\(filename).mp4")
+        } catch {
+            print("Error: \(error)")
+        }
+
     }
     
     private func moveFileToDownloads() {
