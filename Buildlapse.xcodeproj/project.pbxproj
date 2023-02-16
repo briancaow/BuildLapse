@@ -51,6 +51,7 @@
 		A7B93CA82991854B00142CAF /* BuildlapseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuildlapseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7B93CAC2991854B00142CAF /* BuildlapseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildlapseUITests.swift; sourceTree = "<group>"; };
 		A7B93CAE2991854B00142CAF /* BuildlapseUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildlapseUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A7D6845C299DBCF200600CD5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +103,7 @@
 		A7B93C8A2991854900142CAF /* Buildlapse */ = {
 			isa = PBXGroup;
 			children = (
+				A7D6845C299DBCF200600CD5 /* Info.plist */,
 				A7B93C8D2991854900142CAF /* ContentView.swift */,
 				A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */,
 				A7B93C8B2991854900142CAF /* BuildlapseApp.swift */,
@@ -232,6 +234,7 @@
 			mainGroup = A7B93C7F2991854900142CAF;
 			packageReferences = (
 				A7A9FC992999864900172FAE /* XCRemoteSwiftPackageReference "Aperture" */,
+				A7CB0A72299D82AD0047E5B2 /* XCRemoteSwiftPackageReference "swiftffmpeg" */,
 			);
 			productRefGroup = A7B93C892991854900142CAF /* Products */;
 			projectDirPath = "";
@@ -441,9 +444,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Buildlapse/Preview Content\"";
 				DEVELOPMENT_TEAM = L4C8QAYK3H;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Buildlapse/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access need to record audio";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -471,7 +477,9 @@
 				DEVELOPMENT_TEAM = L4C8QAYK3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Buildlapse/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Microphone access need to record audio";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -600,6 +608,14 @@
 			requirement = {
 				branch = main;
 				kind = branch;
+			};
+		};
+		A7CB0A72299D82AD0047E5B2 /* XCRemoteSwiftPackageReference "swiftffmpeg" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sunlubo/swiftffmpeg.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
