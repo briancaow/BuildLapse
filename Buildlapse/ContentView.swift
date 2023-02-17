@@ -18,6 +18,10 @@ struct ContentView: View {
     @State var tabSelection: Int = 0
     @State var isRecording: Bool = false
     
+    let speeds:Array<Double> = [1.25, 1.5, 1.75, 2, 4, 8, 16, 32]
+    @State private var selectedSpeedIndex = 0
+    
+    
     init(filename: String) {
         self.filename = filename
         
@@ -32,8 +36,15 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $tabSelection){
             VStack {
-
                 Text(isRecording ? "🔴 Recording desktop. Press stop to download recording." : "not recording")
+                Picker("Playback Speed", selection: $selectedSpeedIndex) {
+                    ForEach(Int(0)..<Int(speeds.count)) { index in
+                        Text("\(Int(floor(speeds[index]))).\(Int((speeds[index] - floor(speeds[index]))*100))x")
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: 200)
+                
                 HStack {
                     Button("Record") {
                         startRecord()
@@ -99,7 +110,7 @@ struct ContentView: View {
         adjustPlayBackSpeed()
         let startTime = CMTime(seconds: 0, preferredTimescale: 1)
         let videoDuration = getVideoDuration(url: URL(fileURLWithPath: "./tmp/timelapsed.mp4"))
-        let endTime = CMTime(seconds: videoDuration/2, preferredTimescale: 1)
+        let endTime = CMTime(seconds: videoDuration/(speeds[selectedSpeedIndex]), preferredTimescale: 1)
         trimVideo(sourceURL: URL(fileURLWithPath: "./tmp/timelapsed.mp4"), destinationURL: URL(fileURLWithPath: "./tmp/output.mp4"), startTime: startTime, endTime: endTime) { error in
             if let error = error {
                 print("Error trimming video: \(error)")
@@ -118,7 +129,7 @@ struct ContentView: View {
         
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ffmpeg")
-        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=0.5*PTS", "./tmp/timelapsed.mp4"]
+        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=\(1.0/speeds[selectedSpeedIndex])*PTS", "./tmp/timelapsed.mp4"]
         
         let outputPipe = Pipe()
         let errorPipe = Pipe()
