@@ -45,18 +45,15 @@ struct ContentView: View {
                 .pickerStyle(.menu)
                 .frame(maxWidth: 200)
                 
-                HStack {
-                    Button("Record") {
+                Button(isRecording ? "Stop Record" : "Record") {
+                    if(isRecording) {
+                        endRecording()
+                    } else {
                         startRecord()
                     }
-                    .disabled(filename == "")
-                    
-                    Button("Stop Record") {
-                        endRecording()
-                    }
-                    .disabled(filename == "")
-                    
                 }
+                .disabled(filename == "")
+                    
             }
             .tabItem{
                 Text("Record")
