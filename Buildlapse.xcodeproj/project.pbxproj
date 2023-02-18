@@ -234,7 +234,6 @@
 			mainGroup = A7B93C7F2991854900142CAF;
 			packageReferences = (
 				A7A9FC992999864900172FAE /* XCRemoteSwiftPackageReference "Aperture" */,
-				A7CB0A72299D82AD0047E5B2 /* XCRemoteSwiftPackageReference "swiftffmpeg" */,
 			);
 			productRefGroup = A7B93C892991854900142CAF /* Products */;
 			projectDirPath = "";
@@ -608,14 +607,6 @@
 			requirement = {
 				branch = main;
 				kind = branch;
-			};
-		};
-		A7CB0A72299D82AD0047E5B2 /* XCRemoteSwiftPackageReference "swiftffmpeg" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sunlubo/swiftffmpeg.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

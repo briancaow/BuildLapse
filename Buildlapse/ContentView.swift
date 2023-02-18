@@ -11,17 +11,21 @@ import Foundation
 import AVFoundation
 
 struct ContentView: View {
-    let filename: String
-    let url: URL
-    let aperture: Aperture
+    
+    var url: URL
+    var aperture: Aperture
     
     @State var tabSelection: Int = 0
     @State var isRecording: Bool = false
+    @State var filename: String = ""
     
-    init(filename: String) {
-        self.filename = filename
+    let speeds:Array<Double> = [1.25, 1.5, 1.75, 2, 4, 8, 16, 32]
+    @State private var selectedSpeedIndex = 0
+    
+    
+    init() {
         
-        self.url = URL(fileURLWithPath: "./tmp/\(filename).mp4")
+        self.url = URL(fileURLWithPath: "./tmp/recording.mp4")
         self.aperture = try! Aperture(destination: url)
         
         let fileManager: FileManager = FileManager.default
@@ -32,20 +36,28 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $tabSelection){
             VStack {
-
                 Text(isRecording ? "🔴 Recording desktop. Press stop to download recording." : "not recording")
-                HStack {
-                    Button("Record") {
+                
+                TextField("File Name", text: $filename)
+                .frame(maxWidth: 200)
+                
+                Picker("Playback Speed", selection: $selectedSpeedIndex) {
+                    ForEach(Int(0)..<Int(speeds.count)) { index in
+                        Text("\(Int(floor(speeds[index]))).\(Int((speeds[index] - floor(speeds[index]))*100))x")
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: 200)
+                
+                Button(isRecording ? "Stop Record" : "Record") {
+                    if(isRecording) {
+                        endRecording()
+                    } else {
                         startRecord()
                     }
-                    .disabled(filename == "")
-                    
-                    Button("Stop Record") {
-                        endRecording()
-                    }
-                    .disabled(filename == "")
-                    
                 }
+                .disabled(filename == "")
+                    
             }
             .tabItem{
                 Text("Record")
@@ -97,7 +109,17 @@ struct ContentView: View {
         
         
         adjustPlayBackSpeed()
-        moveFileToDownloads()
+        let startTime = CMTime(seconds: 0, preferredTimescale: 1)
+        let videoDuration = getVideoDuration(url: URL(fileURLWithPath: "./tmp/timelapsed.mp4"))
+        let endTime = CMTime(seconds: videoDuration/(speeds[selectedSpeedIndex]), preferredTimescale: 1)
+        trimVideo(sourceURL: URL(fileURLWithPath: "./tmp/timelapsed.mp4"), destinationURL: URL(fileURLWithPath: "./tmp/output.mp4"), startTime: startTime, endTime: endTime) { error in
+            if let error = error {
+                print("Error trimming video: \(error)")
+            } else {
+                print("Video trimmed successfully!")
+            }
+        }
+        
         
         //RunLoop.current.run()
         
@@ -108,7 +130,7 @@ struct ContentView: View {
         
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ffmpeg")
-        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=0.05*PTS", "./tmp/output.mp4"]
+        task.arguments = ["-i", "./tmp/recording.mp4", "-filter:v", "setpts=\(1.0/speeds[selectedSpeedIndex])*PTS", "./tmp/timelapsed.mp4"]
         
         let outputPipe = Pipe()
         let errorPipe = Pipe()
@@ -132,15 +154,55 @@ struct ContentView: View {
         print("Output: \(output)")
         print("Error: \(error)")
         
-        // Remove testfile
+        // Remove recording file
         let fileManager = FileManager.default
         
         do {
-            try fileManager.removeItem(atPath: "./tmp/\(filename).mp4")
+            try fileManager.removeItem(atPath: "./tmp/recording.mp4")
         } catch {
             print("Error: \(error)")
         }
 
+    }
+    
+    private func trimVideo(sourceURL: URL, destinationURL: URL, startTime: CMTime, endTime: CMTime, completion: @escaping (Error?) -> ()) {
+        let asset = AVAsset(url: sourceURL)
+        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
+            completion(nil)
+            return
+        }
+        
+        exportSession.outputURL = destinationURL
+        exportSession.outputFileType = AVFileType.mp4
+        
+        let timeRange = CMTimeRangeFromTimeToTime(start: startTime, end: endTime)
+        exportSession.timeRange = timeRange
+        exportSession.exportAsynchronously {
+            if exportSession.status == .completed {
+                completion(nil)
+                moveFileToDownloads()
+                
+                // Remove timelapse file
+                let fileManager = FileManager.default
+                
+                do {
+                    try fileManager.removeItem(atPath: "./tmp/timelapsed.mp4")
+                } catch {
+                    print("Error: \(error)")
+                }
+                
+            } else if let error = exportSession.error {
+                completion(error)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    private func getVideoDuration(url: URL) -> Double {
+        let asset = AVAsset(url: url)
+        let duration = asset.duration
+        return CMTimeGetSeconds(duration)
     }
     
     private func moveFileToDownloads() {
@@ -148,7 +210,7 @@ struct ContentView: View {
         let fileManager = FileManager.default
         let downloadsFolderURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
 
-        let destinationURL = downloadsFolderURL.appendingPathComponent("output.mp4")
+        let destinationURL = downloadsFolderURL.appendingPathComponent("\(filename).mp4")
         print(destinationURL)
         do {
             try fileManager.moveItem(at: URL(fileURLWithPath: "./tmp/output.mp4"), to: destinationURL)
@@ -165,7 +227,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(filename: "filename")
+        ContentView()
     }
 }
 
