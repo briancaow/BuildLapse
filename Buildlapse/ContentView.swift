@@ -210,7 +210,8 @@ struct ContentView: View {
         let fileManager = FileManager.default
         let downloadsFolderURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
 
-        let destinationURL = downloadsFolderURL.appendingPathComponent("\(filename).mp4")
+        let destinationURL = downloadsFolderURL.appendingPathComponent(getUniqueFileName("/\(filename).mp4"))
+    
         print(destinationURL)
         do {
             try fileManager.moveItem(at: URL(fileURLWithPath: "./tmp/output.mp4"), to: destinationURL)
@@ -220,6 +221,29 @@ struct ContentView: View {
         }
         
     }
+    
+    private func getUniqueFileName(_ fileName: String) -> String {
+        let fileManager = FileManager.default
+        let downloadsDirectory = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
+        var name = fileName
+        var suffix = 1
+        
+        var fileURL = downloadsDirectory.appendingPathComponent(fileName)
+        while fileManager.fileExists(atPath: fileURL.path) {
+            let fileExtension = (fileName as NSString).pathExtension
+            let nameWithoutExtension = (fileName as NSString).deletingPathExtension
+            
+            name = "\(nameWithoutExtension)_\(suffix).\(fileExtension)"
+            suffix += 1
+            
+            let newFileURL = downloadsDirectory.appendingPathComponent(name)
+            fileURL = newFileURL
+        }
+        
+        return name
+    }
+
+
     
 }
 
