@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A76BAF5C29A16E74004CF0F8 /* RecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76BAF5B29A16E74004CF0F8 /* RecordView.swift */; };
 		A7A9FC9B2999864900172FAE /* Aperture in Frameworks */ = {isa = PBXBuildFile; productRef = A7A9FC9A2999864900172FAE /* Aperture */; };
 		A7A9FC9D2999BF1B00172FAE /* BuildHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */; };
 		A7B93C8C2991854900142CAF /* BuildlapseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B93C8B2991854900142CAF /* BuildlapseApp.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A76BAF5B29A16E74004CF0F8 /* RecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordView.swift; sourceTree = "<group>"; };
 		A777BE1B299B218E00061722 /* BuildlapseDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BuildlapseDebug.entitlements; sourceTree = "<group>"; };
 		A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildHistoryView.swift; sourceTree = "<group>"; };
 		A7B93C882991854900142CAF /* Buildlapse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Buildlapse.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +107,7 @@
 			children = (
 				A7D6845C299DBCF200600CD5 /* Info.plist */,
 				A7B93C8D2991854900142CAF /* ContentView.swift */,
+				A76BAF5B29A16E74004CF0F8 /* RecordView.swift */,
 				A7A9FC9C2999BF1B00172FAE /* BuildHistoryView.swift */,
 				A7B93C8B2991854900142CAF /* BuildlapseApp.swift */,
 				A7B93C8F2991854B00142CAF /* Assets.xcassets */,
@@ -280,6 +283,7 @@
 				A7B93C982991854B00142CAF /* Buildlapse.xcdatamodeld in Sources */,
 				A7B93C8E2991854900142CAF /* ContentView.swift in Sources */,
 				A7A9FC9D2999BF1B00172FAE /* BuildHistoryView.swift in Sources */,
+				A76BAF5C29A16E74004CF0F8 /* RecordView.swift in Sources */,
 				A7B93C8C2991854900142CAF /* BuildlapseApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
