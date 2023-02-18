@@ -22,7 +22,6 @@ struct ContentView: View {
     let speeds:Array<Double> = [1.25, 1.5, 1.75, 2, 4, 8, 16, 32]
     @State private var selectedSpeedIndex = 0
     
-    
     init() {
         
         self.url = URL(fileURLWithPath: "./tmp/recording.mp4")
@@ -49,7 +48,7 @@ struct ContentView: View {
                 .pickerStyle(.menu)
                 .frame(maxWidth: 200)
                 
-                Button(isRecording ? "Stop Record" : "Record") {
+                Button(isRecording ? "Stop" : "Record") {
                     if(isRecording) {
                         endRecording()
                     } else {
@@ -243,11 +242,7 @@ struct ContentView: View {
         return name
     }
 
-
-    
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
