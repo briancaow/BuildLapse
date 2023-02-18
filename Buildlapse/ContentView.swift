@@ -11,21 +11,21 @@ import Foundation
 import AVFoundation
 
 struct ContentView: View {
-    let filename: String
-    let url: URL
-    let aperture: Aperture
+    
+    var url: URL
+    var aperture: Aperture
     
     @State var tabSelection: Int = 0
     @State var isRecording: Bool = false
+    @State var filename: String = ""
     
     let speeds:Array<Double> = [1.25, 1.5, 1.75, 2, 4, 8, 16, 32]
     @State private var selectedSpeedIndex = 0
     
     
-    init(filename: String) {
-        self.filename = filename
+    init() {
         
-        self.url = URL(fileURLWithPath: "./tmp/\(filename).mp4")
+        self.url = URL(fileURLWithPath: "./tmp/recording.mp4")
         self.aperture = try! Aperture(destination: url)
         
         let fileManager: FileManager = FileManager.default
@@ -37,6 +37,10 @@ struct ContentView: View {
         TabView(selection: $tabSelection){
             VStack {
                 Text(isRecording ? "🔴 Recording desktop. Press stop to download recording." : "not recording")
+                
+                TextField("File Name", text: $filename)
+                .frame(maxWidth: 200)
+                
                 Picker("Playback Speed", selection: $selectedSpeedIndex) {
                     ForEach(Int(0)..<Int(speeds.count)) { index in
                         Text("\(Int(floor(speeds[index]))).\(Int((speeds[index] - floor(speeds[index]))*100))x")
@@ -126,7 +130,7 @@ struct ContentView: View {
         
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/ffmpeg")
-        task.arguments = ["-i", "./tmp/\(filename).mp4", "-filter:v", "setpts=\(1.0/speeds[selectedSpeedIndex])*PTS", "./tmp/timelapsed.mp4"]
+        task.arguments = ["-i", "./tmp/recording.mp4", "-filter:v", "setpts=\(1.0/speeds[selectedSpeedIndex])*PTS", "./tmp/timelapsed.mp4"]
         
         let outputPipe = Pipe()
         let errorPipe = Pipe()
@@ -150,11 +154,11 @@ struct ContentView: View {
         print("Output: \(output)")
         print("Error: \(error)")
         
-        // Remove testfile
+        // Remove recording file
         let fileManager = FileManager.default
         
         do {
-            try fileManager.removeItem(atPath: "./tmp/\(filename).mp4")
+            try fileManager.removeItem(atPath: "./tmp/recording.mp4")
         } catch {
             print("Error: \(error)")
         }
@@ -206,7 +210,7 @@ struct ContentView: View {
         let fileManager = FileManager.default
         let downloadsFolderURL = fileManager.urls(for: .downloadsDirectory, in: .userDomainMask).first!
 
-        let destinationURL = downloadsFolderURL.appendingPathComponent("output.mp4")
+        let destinationURL = downloadsFolderURL.appendingPathComponent("\(filename).mp4")
         print(destinationURL)
         do {
             try fileManager.moveItem(at: URL(fileURLWithPath: "./tmp/output.mp4"), to: destinationURL)
@@ -223,7 +227,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(filename: "filename")
+        ContentView()
     }
 }
 
